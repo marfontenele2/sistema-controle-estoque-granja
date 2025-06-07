@@ -10,30 +10,30 @@
 
   <header>
     <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjH8-ldDYUyOf8ZmuPKLNFnAkBVEq_OUAhY30-hCLxiK83G3qAQ0ufda9Vihur1GoZqTB_0gfrj-2cFNhGUh3pI9qmsIiSiKSfR5NBpFTIrVOwTOEomrYhDtMrfAW9tQk4Fo_OX1haM678hcQe_EjRHql94BBK0E38lrQiimo8zQGG5aPw3YYiKRD0FAyE/s1600/Logo%20transparente%20de%20Granja.png" alt="Logo da Prefeitura de Granja">
-    <h1>Painel Administrativo</h1> 
-</header>
-
+    <h1>Painel Administrativo</h1>
+    <button id="logout-button" style="background: #dc3545; margin-left: auto;">Sair</button>
+  </header>
 
   <main>
     <section id="gerenciamento-equipes">
       <h2>Gerenciamento de Equipes</h2>
-      
       <div id="lista-equipes">
         <p>Carregando equipes...</p>
       </div>
-
     </section>
+
     <section id="gerenciamento-pedidos">
       <h2>Histórico de Pedidos</h2>
       <div id="lista-pedidos">
         <p>Nenhum pedido encontrado.</p>
       </div>
     </section>
+
     <section id="adicionar-reserva">
       <h3>Adicionar Saldo de Reserva</h3>
       <form id="form-reserva">
           <label for="equipe-select">Selecione a Equipe:</label>
-          <select id="equipe-select" name="equipe-select">
+          <select id="equipe-select" name="equipe-select" required>
             </select>
 
           <label for="valor-reserva">Valor do Saldo de Reserva:</label>
@@ -51,33 +51,10 @@
     <p>Desenvolvido por Márcio Carvalho Fontenele - © 2025</p>
   </footer>
 
-  <script src="js/banco_dados.js"></script>
-  <script src="js/banco_dados.js"></script>
-  <script src="js/logica_core.js"></script> <script src="js/script_admin.js"></script> ```
-
-  <main>
-    <section id="painel-saldo">
-      <h2 id="nome-equipe">Carregando...</h2>
-      <div class="saldo-info">
-        <p>Seu Saldo Total Disponível:</p>
-        <h3 id="saldo-total">0</h3>
-        <span>Prevenções</span>
-      </div>
-    </section>
-
-    <section id="pedido-automatico">
-      <h3>Pedido de Reposição Automática</h3>
-      <p>Com base no seu saldo, este é o pedido que será gerado:</p>
-      
-      <div id="lista-pedido-disponivel">
-        </div>
-      
-      <div id="valor-pedido">
-        </div>
-
-      <button id="btn-gerar-pedido">Gerar e Enviar Solicitação</button>
-    </section>
-  </main>
-  <script src="js/script_admin.js"></script>
+  <script type="module" src="js/firebase-config.js"></script>
+  <script type="module" src="js/banco_dados.js"></script>
+  <script type="module" src="js/logica_core.js"></script>
+  <script type="module" src="js/script_admin.js"></script>
+  <script type="module" src="js/auth.js"></script>
 </body>
 </html>

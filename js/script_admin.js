@@ -1,154 +1,164 @@
-// js/script_admin.js (VERSÃO FINAL E CORRIGIDA)
+import { db } from './firebase-config.js';
+import { appState } from './banco_dados.js';
+import { 
+  collection, 
+  getDocs, 
+  doc, 
+  updateDoc, 
+  increment,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/**
- * Função principal para "desenhar" ou "renderizar"
- * todas as informações dinâmicas na tela do administrador.
- */
+// A função renderizarPainelAdmin continua a mesma
 function renderizarPainelAdmin() {
-  console.log("Renderizando o painel do administrador...");
-
   const divListaEquipes = document.getElementById('lista-equipes');
   const selectEquipesForm = document.getElementById('equipe-select');
-
   divListaEquipes.innerHTML = '';
   selectEquipesForm.innerHTML = '';
-
   if (appState.equipes.length === 0) {
-    divListaEquipes.innerHTML = '<p>Nenhuma equipe cadastrada.</p>';
+    divListaEquipes.innerHTML = '<p>Nenhuma equipe encontrada no Firestore.</p>';
     return;
   }
-
   const optionDefault = document.createElement('option');
   optionDefault.disabled = true;
   optionDefault.selected = true;
   optionDefault.textContent = 'Selecione uma equipe';
   selectEquipesForm.appendChild(optionDefault);
-
   appState.equipes.forEach(equipe => {
     const equipeCard = document.createElement('div');
     equipeCard.className = 'equipe-card';
-    
-    equipeCard.innerHTML = `
-      <h4>${equipe.nome}</h4>
-      <p>Saldo de Produção: <strong>${equipe.saldoProducao}</strong></p>
-      <p>Saldo de Reserva: <strong>${equipe.saldoReserva}</strong></p>
-    `;
+    equipeCard.innerHTML = `<h4>${equipe.nome}</h4><p>Saldo de Produção: <strong>${equipe.saldoProducao}</strong></p><p>Saldo de Reserva: <strong>${equipe.saldoReserva}</strong></p>`;
     divListaEquipes.appendChild(equipeCard);
-
     const option = document.createElement('option');
-    option.value = equipe.id;
+    option.value = equipe.firestoreId;
     option.textContent = equipe.nome;
     selectEquipesForm.appendChild(option);
   });
 }
 
-/**
- * Renderiza a lista de pedidos feitos pelas equipes.
- */
-function renderizarListaPedidos() {
+// A função renderizarListaPedidos continua a mesma
+function renderizarListaPedidos(pedidos) {
   const divListaPedidos = document.getElementById('lista-pedidos');
   divListaPedidos.innerHTML = '';
-
-  if (appState.pedidos.length === 0) {
-    divListaPedidos.innerHTML = '<p>Nenhum pedido pendente ou histórico encontrado.</p>';
+  if (pedidos.length === 0) {
+    divListaPedidos.innerHTML = '<p>Nenhum pedido encontrado no histórico.</p>';
     return;
   }
-
-  const pedidosRecentesPrimeiro = [...appState.pedidos].reverse();
-
-  pedidosRecentesPrimeiro.forEach(pedido => {
+  pedidos.forEach(pedido => {
     const pedidoCard = document.createElement('div');
+    const status = (pedido.status || 'desconhecido').toLowerCase();
+    const valorTotal = (pedido.valorTotalBRL || 0).toFixed(2);
     pedidoCard.className = 'pedido-card';
-    pedidoCard.classList.add(`status-${pedido.status.toLowerCase()}`);
-
-    let itensHTML = pedido.itens.map(item => 
-      `<li>${item.quantidade}x - ${item.nome}</li>`
-    ).join('');
-
+    pedidoCard.classList.add(`status-${status}`);
+    const dataPedido = pedido.dataCriacao ? new Date(pedido.dataCriacao.seconds * 1000).toLocaleDateString('pt-BR') : 'Data indisponível';
+    let itensHTML = pedido.itens && Array.isArray(pedido.itens) ? pedido.itens.map(item => `<li>${item.quantidade}x - ${item.nome}</li>`).join('') : '<li>Itens não especificados</li>';
     let actionsHTML = '';
     if (pedido.status === 'Pendente') {
-      actionsHTML = `
-        <div class="pedido-actions">
-          <button class="btn-aprovar" data-id="${pedido.id}">Aprovar</button>
-          <button class="btn-rejeitar" data-id="${pedido.id}">Rejeitar</button>
-        </div>
-      `;
+      actionsHTML = `<div class="pedido-actions"><button class="btn-aprovar" data-id="${pedido.firestoreId}">Aprovar</button><button class="btn-rejeitar" data-id="${pedido.firestoreId}">Rejeitar</button></div>`;
     }
-
     pedidoCard.innerHTML = `
       <div class="pedido-header">
-        <h4>Pedido #${pedido.id}</h4>
-        <span class="pedido-status">${pedido.status}</span>
+        <h4>Pedido para ${pedido.equipeNome || 'Equipe desconhecida'}</h4>
+        <span class="pedido-status">${pedido.status || 'Desconhecido'}</span>
       </div>
-      <div class="pedido-body">
-        <p><strong>Equipe:</strong> ${pedido.equipeNome}</p>
-        <p><strong>Data:</strong> ${pedido.data}</p>
-        <p><strong>Itens Solicitados:</strong></p>
-        <ul>${itensHTML}</ul>
-        <p class="pedido-valor"><strong>Valor Total:</strong> R$ ${pedido.valorTotalBRL.toFixed(2)}</p>
-      </div>
-      ${actionsHTML} 
-    `;
-
+      <div class="pedido-body"><p><strong>Data:</strong> ${dataPedido}</p><p><strong>Itens Solicitados:</strong></p><ul>${itensHTML}</ul><p class="pedido-valor"><strong>Valor Total:</strong> R$ ${valorTotal}</p></div>
+      ${actionsHTML}`;
     divListaPedidos.appendChild(pedidoCard);
   });
 }
 
-// --- INICIALIZAÇÃO DA PÁGINA ---
-document.addEventListener('DOMContentLoaded', function() {
-  carregarEstado();
-  renderizarPainelAdmin();
-  renderizarListaPedidos();
+// A função carregarErenderizarPedidos continua a mesma
+async function carregarErenderizarPedidos() {
+  const divListaPedidos = document.getElementById('lista-pedidos');
+  divListaPedidos.innerHTML = '<p>Carregando histórico de pedidos...</p>';
+  try {
+    const pedidosRef = collection(db, "pedidos");
+    const q = query(pedidosRef, orderBy("dataCriacao", "desc"));
+    const querySnapshot = await getDocs(q);
+    const pedidos = [];
+    querySnapshot.forEach((doc) => {
+      pedidos.push({ firestoreId: doc.id, ...doc.data() });
+    });
+    renderizarListaPedidos(pedidos);
+  } catch (error) {
+    console.error("Erro ao buscar pedidos:", error);
+    divListaPedidos.innerHTML = '<p style="color: red;">Erro ao carregar o histórico de pedidos.</p>';
+    const errorElement = document.createElement('pre');
+    errorElement.style.color = 'red';
+    errorElement.textContent = error.stack;
+    divListaPedidos.appendChild(errorElement);
+  }
+}
 
-  // Lógica para o formulário de adicionar saldo de reserva
-  const formReserva = document.getElementById('form-reserva');
-  formReserva.addEventListener('submit', function(event) {
-    event.preventDefault();
+// --- Lógica Principal da Página do Admin ---
+document.addEventListener('DOMContentLoaded', async () => {
+  // Carrega as equipes
+  try {
+    const querySnapshot = await getDocs(collection(db, "equipes"));
+    appState.equipes = [];
+    querySnapshot.forEach((doc) => {
+      appState.equipes.push({ firestoreId: doc.id, ...doc.data() });
+    });
+    renderizarPainelAdmin();
+  } catch (error) {
+    console.error("Erro ao buscar equipes do Firestore: ", error);
+  }
 
-    const equipeId = parseInt(formReserva.elements['equipe-select'].value);
-    const valorReserva = parseInt(formReserva.elements['valor-reserva'].value);
-    
-    if (isNaN(equipeId) || isNaN(valorReserva) || valorReserva <= 0) {
-      alert('Por favor, selecione uma equipe e insira um valor de saldo válido.');
+  // Carrega e exibe os pedidos
+  await carregarErenderizarPedidos();
+  
+  // --- INÍCIO DA NOVA LÓGICA DE AÇÕES ---
+  const divListaPedidos = document.getElementById('lista-pedidos');
+
+  divListaPedidos.addEventListener('click', async (event) => {
+    const target = event.target; // O elemento exato que foi clicado
+    const pedidoId = target.dataset.id; // Pega o 'data-id' do elemento clicado
+
+    // Se o elemento clicado não tiver um data-id, não faz nada
+    if (!pedidoId) {
       return;
     }
 
-    const equipe = appState.equipes.find(e => e.id === equipeId);
-    if (equipe) {
-      equipe.saldoReserva += valorReserva;
-      salvarEstado();
-      renderizarPainelAdmin();
-      formReserva.reset();
-      alert(`Saldo de ${valorReserva} adicionado com sucesso para a equipe ${equipe.nome}!`);
-    } else {
-      alert('Erro: Equipe selecionada não foi encontrada.');
-    }
-  });
-
-  // Lógica para os botões de Aprovar/Rejeitar na lista de pedidos
-  const divListaPedidos = document.getElementById('lista-pedidos');
-  divListaPedidos.addEventListener('click', function(event) {
-    const target = event.target;
-    const pedidoId = parseInt(target.dataset.id);
-
-    if (!pedidoId) return;
-
-    const pedido = appState.pedidos.find(p => p.id === pedidoId);
-    if (!pedido) return;
-
+    // Verifica se o botão de aprovar foi clicado
     if (target.classList.contains('btn-aprovar')) {
-      if (confirm(`Tem certeza que deseja APROVAR o pedido #${pedido.id}?`)) {
-        pedido.status = 'Aprovado';
+      if (confirm(`Tem certeza que deseja APROVAR este pedido?`)) {
+        target.textContent = 'Aprovando...';
+        target.disabled = true;
+        
+        const pedidoRef = doc(db, 'pedidos', pedidoId);
+        try {
+          await updateDoc(pedidoRef, { status: 'Aprovado' });
+          console.log(`Pedido ${pedidoId} aprovado com sucesso.`);
+          await carregarErenderizarPedidos(); // Recarrega a lista para mostrar a mudança
+        } catch (error) {
+          console.error("Erro ao aprovar pedido:", error);
+          alert("Ocorreu um erro ao aprovar o pedido.");
+          target.textContent = 'Aprovar';
+          target.disabled = false;
+        }
       }
     }
 
+    // Verifica se o botão de rejeitar foi clicado
     if (target.classList.contains('btn-rejeitar')) {
-      if (confirm(`Tem certeza que deseja REJEITAR o pedido #${pedido.id}?`)) {
-        pedido.status = 'Rejeitado';
+      if (confirm(`Tem certeza que deseja REJEITAR este pedido?`)) {
+        target.textContent = 'Rejeitando...';
+        target.disabled = true;
+
+        const pedidoRef = doc(db, 'pedidos', pedidoId);
+        try {
+          await updateDoc(pedidoRef, { status: 'Rejeitado' });
+          console.log(`Pedido ${pedidoId} rejeitado com sucesso.`);
+          await carregarErenderizarPedidos(); // Recarrega a lista para mostrar a mudança
+        } catch (error) {
+          console.error("Erro ao rejeitar pedido:", error);
+          alert("Ocorreu um erro ao rejeitar o pedido.");
+          target.textContent = 'Rejeitar';
+          target.disabled = false;
+        }
       }
     }
-    
-    salvarEstado();
-    renderizarListaPedidos();
   });
+  // --- FIM DA NOVA LÓGICA DE AÇÕES ---
 });

@@ -1,34 +1,22 @@
-// js/logica_core.js (VERSÃO COMPLETA E CORRIGIDA)
+// Importa o estado da aplicação para que as funções possam usá-lo
+import { appState } from './banco_dados.js';
 
 /**
- * NOVA VERSÃO - Calcula o pedido com base na DEMANDA gerada pelas prevenções.
- * Cada item é calculado de forma independente.
- * @param {number} equipeId O ID da equipe para a qual o pedido será calculado.
- * @returns {object} Um objeto com os itens do pedido e o valor total.
+ * Calcula os itens que uma equipe pode solicitar com base no seu saldo total.
+ * @param {number} equipeId - O ID da equipe.
+ * @returns {object|null} Um objeto com os itens do pedido e o valor total, ou null se a equipe não for encontrada.
  */
 function calcularPedidoDisponivel(equipeId) {
   const equipe = appState.equipes.find(e => e.id === equipeId);
-  if (!equipe) {
-    console.error("Erro: Equipe com ID " + equipeId + " não encontrada.");
-    return null;
-  }
+  if (!equipe) { return null; }
 
   const saldoDePrevencoes = equipe.saldoProducao + equipe.saldoReserva;
-  
-  const pedidoCalculado = {
-    itens: [],
-    valorTotalBRL: 0
-  };
+  const pedidoCalculado = { itens: [], valorTotalBRL: 0 };
 
   appState.itens.forEach(item => {
     const quantidadeNecessaria = Math.floor(saldoDePrevencoes / item.custoEmPrevencoes);
-
     if (quantidadeNecessaria > 0) {
-      pedidoCalculado.itens.push({
-        itemId: item.id,
-        nome: item.nome,
-        quantidade: quantidadeNecessaria
-      });
+      pedidoCalculado.itens.push({ itemId: item.id, nome: item.nome, quantidade: quantidadeNecessaria });
       pedidoCalculado.valorTotalBRL += quantidadeNecessaria * item.valorBRL;
     }
   });
@@ -37,17 +25,14 @@ function calcularPedidoDisponivel(equipeId) {
 }
 
 /**
- * Debita um valor de custo dos saldos de uma equipe,
- * priorizando o saldo de produção antes do saldo de reserva.
- * @param {number} equipeId O ID da equipe a ser debitada.
- * @param {number} custoTotal O custo total em "prevenções" a ser debitado.
+ * Debita um custo do saldo da equipe, priorizando o saldo de produção.
+ * Esta função precisará ser adaptada quando a lógica for 100% Firestore.
+ * @param {number} equipeId - O ID da equipe.
+ * @param {number} custoTotal - O custo total a ser debitado.
  */
 function debitarSaldoDaEquipe(equipeId, custoTotal) {
   const equipe = appState.equipes.find(e => e.id === equipeId);
-  if (!equipe) {
-    console.error(`Erro ao debitar: equipe ${equipeId} não encontrada.`);
-    return;
-  }
+  if (!equipe) { return; }
 
   let custoRestante = custoTotal;
 
@@ -60,28 +45,10 @@ function debitarSaldoDaEquipe(equipeId, custoTotal) {
   if (custoRestante > 0 && equipe.saldoReserva > 0) {
     const debitoReserva = Math.min(equipe.saldoReserva, custoRestante);
     equipe.saldoReserva -= debitoReserva;
-    custoRestante -= debitoReserva;
-  }
-  
-  console.log(`Débito realizado para ${equipe.nome}. Novo Saldo Produção: ${equipe.saldoProducao}, Novo Saldo Reserva: ${equipe.saldoReserva}`);
-}
-
-/**
- * Salva o estado atual da aplicação na memória do navegador.
- */
-function salvarEstado() {
-  localStorage.setItem('appState', JSON.stringify(appState));
-}
-
-/**
- * Carrega o estado da aplicação da memória do navegador, se existir.
- */
-function carregarEstado() {
-  const estadoSalvo = localStorage.getItem('appState');
-  if (estadoSalvo) {
-    appState = JSON.parse(estadoSalvo);
-    console.log("Estado carregado da memória!", appState);
-  } else {
-    console.log("Nenhum estado salvo encontrado, usando estado inicial.");
   }
 }
+
+// As funções salvarEstado e carregarEstado foram removidas pois são obsoletas.
+
+// Exporta as funções para que outros scripts possam usá-las (se necessário)
+export { calcularPedidoDisponivel, debitarSaldoDaEquipe };

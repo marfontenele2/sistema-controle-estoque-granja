@@ -1,9 +1,5 @@
-/* css/estilo.css (VERSÃO MODERNIZADA) */
-
-/* --- NOVO: Importando fonte moderna do Google Fonts --- */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-/* --- VARIÁVEIS DE CORES E ESTILOS GLOBAIS --- */
 :root {
   --cor-primaria-esus: #00549F;
   --cor-secundaria-esus: #0D81E4;
@@ -15,7 +11,6 @@
   --sombra-padrao: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* --- ESTILOS GLOBAIS E ESTRUTURA --- */
 * {
   margin: 0;
   padding: 0;
@@ -23,7 +18,7 @@
 }
 
 body {
-  font-family: 'Poppins', sans-serif; /* <-- Usando a nova fonte */
+  font-family: 'Poppins', sans-serif;
   background-color: var(--cor-fundo-esus);
   color: var(--cor-texto);
 }
@@ -39,13 +34,16 @@ header {
   box-shadow: var(--sombra-padrao);
 }
 
-/* --- NOVO ESTILO DO LOGO --- */
 header img {
   height: 55px;
   background-color: var(--cor-branco);
-  border-radius: 8px; /* <-- Bordas arredondadas */
+  border-radius: 8px;
   padding: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* <-- Efeito de sombra */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+  color: var(--cor-branco);
 }
 
 main {
@@ -62,9 +60,9 @@ section {
   box-shadow: var(--sombra-padrao);
 }
 
-h1, h2, h3 {
+h2, h3 {
   color: var(--cor-primaria-esus);
-  font-weight: 700; /* Letra mais forte */
+  font-weight: 700;
 }
 
 h2 {
@@ -86,11 +84,7 @@ footer {
   color: #777;
 }
 
-
-/* --- COMPONENTES ESPECÍFICOS --- */
-
-/* Cards das Equipes e Pedidos */
-.equipe-card, .item-pedido {
+.equipe-card, .item-pedido, .pedido-card {
   border: 1px solid var(--cor-borda);
   border-radius: 8px;
   padding: 15px;
@@ -104,7 +98,6 @@ footer {
   align-items: center;
 }
 
-/* Formulários */
 #form-reserva {
   display: flex;
   flex-direction: column;
@@ -116,8 +109,7 @@ footer {
   font-size: 0.9em;
 }
 
-#form-reserva input,
-#form-reserva select {
+#form-reserva input, #form-reserva select {
   width: 100%;
   padding: 12px;
   border: 1px solid var(--cor-borda);
@@ -126,69 +118,55 @@ footer {
   font-family: 'Poppins', sans-serif;
 }
 
-/* --- BOTÕES MODERNIZADOS --- */
 button {
   background-image: linear-gradient(to right, var(--cor-secundaria-esus), var(--cor-primaria-esus));
   color: var(--cor-branco);
   border: none;
-  padding: 15px 25px; /* <-- Botão maior */
-  border-radius: 8px; /* <-- Borda mais atrativa */
+  padding: 15px 25px;
+  border-radius: 8px;
   font-size: 1.1em;
   font-weight: 600;
   font-family: 'Poppins', sans-serif;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 84, 159, 0.3);
-  transition: all 0.3s ease; /* Efeito suave em todas as propriedades */
+  transition: all 0.3s ease;
 }
 
 button:hover {
-  transform: translateY(-3px); /* Efeito de "levantar" */
+  transform: translateY(-3px);
   box-shadow: 0 6px 12px rgba(0, 84, 159, 0.4);
 }
 
 button:active {
-  transform: translateY(1px); /* Efeito de "pressionar" */
+  transform: translateY(1px);
   box-shadow: 0 2px 4px rgba(0, 84, 159, 0.3);
 }
 
-/* Estilo específico para o botão de gerar pedido na tela da equipe */
 #btn-gerar-pedido {
   width: 100%;
   margin-top: 20px;
 }
-/* Adicionar ao final do arquivo css/estilo.css */
 
-/* CORREÇÃO: Força o título do cabeçalho a ser branco */
-header h1 {
-  color: var(--cor-branco);
+button:disabled, button:disabled:hover {
+  background-image: none;
+  background-color: #B0BCC9;
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
 }
-/* Adicionar ao final do arquivo css/estilo.css */
 
-/* NOVO: Estilo para botões quando estiverem desabilitados */
-button:disabled,
-button:disabled:hover {
-  background-image: none; /* Remove o gradiente */
-  background-color: #B0BCC9;  /* Cor cinza, de desabilitado */
-  box-shadow: none; /* Remove a sombra */
-  transform: none; /* Remove qualquer efeito de levantar/pressionar */
-  cursor: not-allowed; /* Mostra um cursor de "proibido" */
-}
-/* Adicionar ao final do css/estilo.css */
-
-/* --- ESTILO DOS CARDS DE PEDIDO --- */
 .pedido-card {
-  border-left: 5px solid #E0E0E0; /* Borda padrão cinza */
-  background-color: #FAFCFF;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  padding: 20px;
-  border: 1px solid var(--cor-borda);
+  border-left: 5px solid #E0E0E0;
 }
-
-/* Colore a borda baseada no status */
-.pedido-card.status-pendente { border-left-color: #FFC107; /* Amarelo */ }
-.pedido-card.status-aprovado { border-left-color: #28a745; /* Verde */ }
-.pedido-card.status-rejeitado { border-left-color: #DC3545; /* Vermelho */ }
+.pedido-card.status-pendente {
+  border-left-color: #FFC107;
+}
+.pedido-card.status-aprovado {
+  border-left-color: #28a745;
+}
+.pedido-card.status-rejeitado {
+  border-left-color: #DC3545;
+}
 
 .pedido-header {
   display: flex;
@@ -207,7 +185,6 @@ button:disabled:hover {
   color: var(--cor-branco);
 }
 
-/* Colore o fundo do status */
 .status-pendente .pedido-status { background-color: #FFC107; }
 .status-aprovado .pedido-status { background-color: #28a745; }
 .status-rejeitado .pedido-status { background-color: #DC3545; }
@@ -218,9 +195,7 @@ button:disabled:hover {
   padding-left: 10px;
 }
 
-.pedido-body li {
-  padding: 2px 0;
-}
+.pedido-body li { padding: 2px 0; }
 
 .pedido-valor {
   text-align: right;
@@ -236,6 +211,5 @@ button:disabled:hover {
   justify-content: flex-end;
 }
 
-/* Estilo para os novos botões de ação */
 .btn-aprovar { background-image: linear-gradient(to right, #34a853, #28a745); }
 .btn-rejeitar { background-image: linear-gradient(to right, #ea4335, #dc3545); }
