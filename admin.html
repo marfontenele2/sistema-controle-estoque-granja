@@ -1,60 +1,171 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
+<!DOCTYPE html><html lang="pt-BR"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel do Administrador - Controle de Estoque</title>
-  <link rel="stylesheet" href="css/estilo.css">
-</head>
-<body>
-
+  <link rel="stylesheet" href="css/estilo.css"></head><body>
   <header>
-    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjH8-ldDYUyOf8ZmuPKLNFnAkBVEq_OUAhY30-hCLxiK83G3qAQ0ufda9Vihur1GoZqTB_0gfrj-2cFNhGUh3pI9qmsIiSiKSfR5NBpFTIrVOwTOEomrYhDtMrfAW9tQk4Fo_OX1haM678hcQe_EjRHql94BBK0E38lrQiimo8zQGG5aPw3YYiKRD0FAyE/s1600/Logo%20transparente%20de%20Granja.png" alt="Logo da Prefeitura de Granja">
+    <img id="logo-prefeitura" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjH8-ldDYUyOf8ZmuPKLNFnAkBVEq_OUAhY30-hCLxiK83G3qAQ0ufda9Vihur1GoZqTB_0gfrj-2cFNhGUh3pI9qmsIiSiKSfR5NBpFTIrVOwTOEomrYhDtMrfAW9tQk4Fo_OX1haM678hcQe_EjRHql94BBK0E38lrQiimo8zQGG5aPw3YYiKRD0FAyE/s1600/Logo%20transparente%20de%20Granja.png" alt="Logo da Prefeitura de Granja">
     <h1>Painel Administrativo</h1>
     <button id="logout-button" style="background: #dc3545; margin-left: auto;">Sair</button>
   </header>
-
   <main>
-    <section id="gerenciamento-equipes">
-      <h2>Gerenciamento de Equipes</h2>
-      <div id="lista-equipes">
-        <p>Carregando equipes...</p>
+    <nav class="admin-nav">
+      <ul>
+        <li><button class="tab-button ativo" data-tab="pedidos">Pedidos</button></li>
+        <li><button class="tab-button" data-tab="saldos">Saldos e Reservas</button></li>
+        <li><button class="tab-button" data-tab="equipes">Gerenciar Equipes</button></li>
+        <li><button class="tab-button" data-tab="itens">Itens e Custos</button></li>
+        <li><button class="tab-button" data-tab="estoque">Gestão de Estoque</button></li>
+        <li><button class="tab-button" data-tab="cadastros">Cadastros</button></li>
+      </ul>
+    </nav>
+    <div class="admin-content">
+      
+      <div id="tab-pedidos" class="tab-panel ativo">
+        <section id="gerenciamento-pedidos">
+          <h2>Gerenciar Pedidos</h2>
+          <div class="filtro-pedidos">
+            <button id="btn-filtro-pendentes" class="filtro-ativo">Pendentes</button>
+            <button id="btn-filtro-todos">Histórico Completo</button>
+          </div>
+          <div id="lista-pedidos"><p>Carregando pedidos...</p></div>
+        </section>
       </div>
-    </section>
 
-    <section id="gerenciamento-pedidos">
-      <h2>Histórico de Pedidos</h2>
-      <div id="lista-pedidos">
-        <p>Nenhum pedido encontrado.</p>
+      <div id="tab-saldos" class="tab-panel">
+        <section id="adicionar-reserva">
+          <h2>Adicionar Saldo de Reserva</h2>
+          <form id="form-reserva" class="admin-form">
+            <label for="equipe-select">Selecione a Equipe:</label>
+            <select id="equipe-select" name="equipe-select" required></select>
+            <label for="valor-reserva">Valor do Saldo de Reserva:</label>
+            <input type="number" id="valor-reserva" name="valor-reserva" min="1" required>
+            <label for="justificativa">Justificativa:</label>
+            <input type="text" id="justificativa" name="justificativa" required>
+            <button type="submit">Adicionar Saldo</button>
+          </form>
+        </section>
       </div>
-    </section>
 
-    <section id="adicionar-reserva">
-      <h3>Adicionar Saldo de Reserva</h3>
-      <form id="form-reserva">
-          <label for="equipe-select">Selecione a Equipe:</label>
-          <select id="equipe-select" name="equipe-select" required>
-            </select>
+      <div id="tab-equipes" class="tab-panel">
+        <section id="gerenciamento-equipes">
+          <h2>Equipes Cadastradas</h2>
+          <div id="lista-equipes"><p>Carregando equipes...</p></div>
+        </section>
+      </div>
 
-          <label for="valor-reserva">Valor do Saldo de Reserva:</label>
-          <input type="number" id="valor-reserva" name="valor-reserva" min="1" required>
+      <div id="tab-itens" class="tab-panel">
+        <section>
+          <h2>Gerenciar Itens e Custos</h2>
+          <div id="lista-itens"><p>Carregando itens...</p></div>
+        </section>
+      </div>
 
-          <label for="justificativa">Justificativa:</label>
-          <input type="text" id="justificativa" name="justificativa" required>
-          
-          <button type="submit">Adicionar Saldo</button>
-      </form>
-    </section>
+      <div id="tab-estoque" class="tab-panel">
+        <section id="entrada-estoque">
+          <h2>Registrar Entrada de Item no Estoque</h2>
+          <form id="form-entrada-estoque" class="admin-form">
+            <label for="item-select-entrada">Selecione o Item:</label>
+            <select id="item-select-entrada" name="item-select-entrada" required></select>
+            <label for="quantidade-entrada">Quantidade Recebida:</label>
+            <input type="number" id="quantidade-entrada" name="quantidade-entrada" min="1" required>
+            <label for="observacao-entrada">Observação (Ex: Recebido do CAF, Nota Fiscal 123):</label>
+            <input type="text" id="observacao-entrada" name="observacao-entrada">
+            <button type="submit">Adicionar ao Estoque</button>
+          </form>
+        </section>
+        <hr style="margin: 40px 0;">
+        <section id="relatorio-consumo">
+            <h2>Relatório de Consumo por Equipe</h2>
+            <form id="form-relatorio-consumo" class="admin-form">
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label for="data-inicio-consumo">Data de Início:</label>
+                        <input type="date" id="data-inicio-consumo" name="data-inicio-consumo" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="data-fim-consumo">Data de Fim:</label>
+                        <input type="date" id="data-fim-consumo" name="data-fim-consumo" required>
+                    </div>
+                </div>
+                <button type="submit">Gerar Relatório</button>
+            </form>
+            <div id="resultado-relatorio-consumo" style="margin-top: 20px;">
+            </div>
+        </section>
+        <hr style="margin: 40px 0;">
+        <section id="relatorio-movimentacao">
+            <h2>Relatório de Movimentação de Estoque</h2>
+            <form id="form-relatorio-movimentacao" class="admin-form">
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <label for="data-inicio-mov">Data de Início:</label>
+                        <input type="date" id="data-inicio-mov" name="data-inicio-mov" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="data-fim-mov">Data de Fim:</label>
+                        <input type="date" id="data-fim-mov" name="data-fim-mov" required>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 20px; margin-top: 15px;">
+                  <button type="submit" style="flex: 1;">Gerar Relatório</button>
+                  <button type="button" id="btn-imprimir-relatorio" style="flex: 1; background: #6c757d;">Imprimir Relatório</button>
+                </div>
+            </form>
+            <div id="resultado-relatorio-movimentacao" style="margin-top: 20px;">
+            </div>
+        </section>
+      </div>
+
+      <div id="tab-cadastros" class="tab-panel">
+        <section id="cadastrar-equipe">
+          <h2>Cadastrar Nova Equipe</h2>
+          <form id="form-nova-equipe" class="admin-form">
+            <label for="nome-nova-equipe">Nome da Equipe:</label>
+            <input type="text" id="nome-nova-equipe" placeholder="Ex: Equipe USF Centro" required>
+            <label for="id-nova-equipe">ID Numérico da Equipe:</label>
+            <input type="number" id="id-nova-equipe" placeholder="Ex: 103 (não pode ser repetido)" min="1" required>
+            <button type="submit">Salvar Nova Equipe</button>
+          </form>
+        </section>
+      </div>
+    </div>
   </main>
 
-  <footer>
-    <p>Desenvolvido por Márcio Carvalho Fontenele - © 2025</p>
-  </footer>
+  <footer><p>Desenvolvido por Márcio Carvalho Fontenele - © 2025</p></footer>
+  
+  <div id="modal-editar-equipe" class="modal-container">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <h2>Editar Equipe</h2>
+      <form id="form-editar-equipe" class="admin-form">
+        <input type="hidden" id="edit-equipe-firestore-id">
+        <label for="edit-nome-equipe">Nome da Equipe:</label>
+        <input type="text" id="edit-nome-equipe" required>
+        <label for="edit-id-equipe">ID Numérico da Equipe:</label>
+        <input type="number" id="edit-id-equipe" min="1" required>
+        <button type="submit">Salvar Alterações</button>
+      </form>
+    </div>
+  </div>
+  <div id="modal-editar-item" class="modal-container">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <h2>Editar Item</h2>
+      <form id="form-editar-item" class="admin-form">
+        <input type="hidden" id="edit-item-id-hidden">
+        <h4 id="edit-item-nome" style="text-align: center; margin-bottom: 20px;">Nome do Item</h4>
+        <label for="edit-custo-prevencoes">Custo em Prevenções:</label>
+        <input type="number" id="edit-custo-prevencoes" min="0" step="1" required>
+        <label for="edit-valor-brl">Valor em R$:</label>
+        <input type="number" id="edit-valor-brl" min="0" step="0.01" required>
+        <button type="submit">Salvar Alterações</button>
+      </form>
+    </div>
+  </div>
 
   <script type="module" src="js/firebase-config.js"></script>
   <script type="module" src="js/banco_dados.js"></script>
   <script type="module" src="js/logica_core.js"></script>
-  <script type="module" src="js/script_admin.js"></script>
   <script type="module" src="js/auth.js"></script>
-</body>
-</html>
+  <script type="module" src="js/script_admin.js"></script></body></html>
