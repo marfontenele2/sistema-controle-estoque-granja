@@ -305,3 +305,59 @@
 .btn-rejeitar:hover {
   background-color: #c82333 !important; /* Um vermelho um pouco mais escuro no hover */
 }
+/* ESTILOS ESPECÍFICOS PARA IMPRESSÃO */
+@media print {
+  /* Esconde o corpo inteiro da página por padrão */
+  body * {
+    visibility: hidden;
+  }
+  /* Mostra APENAS a área de impressão e seu conteúdo */
+  .area-de-impressao, .area-de-impressao * {
+    visibility: visible;
+  }
+  /* Posiciona a área de impressão no topo da página de impressão */
+  .area-de-impressao {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+}
+/* ESTILOS DO DASHBOARD */
+.dashboard-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.dashboard-card {
+  background-color: #FAFCFF;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.dashboard-card h4 {
+  font-size: 1.1em;
+  margin-bottom: 10px;
+  color: var(--cor-texto-claro);
+  font-weight: 500;
+}
+
+.dashboard-number {
+  font-size: 2.5em;
+  font-weight: 700;
+  color: var(--cor-primaria-esus);
+  margin: 10px 0;
+}
+
+.dashboard-desc {
+  font-size: 0.9em;
+  color: #777;
+}
+/* REGRA ESPECIAL PARA CORRIGIR A COR DO TÍTULO NO CABEÇALHO */
+header h1 {
+  color: var(--cor-branco);
+}
